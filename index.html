@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="theme-color" content="#FF8FB8">
+<link rel="icon" type="image/png" href="S.png">
+<link rel="apple-touch-icon" href="S.png">
 <title>XSexn 🎀</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -192,6 +194,21 @@
   .ex-chip.active{ background:var(--pink); color:#fff; }
   .ex-chip.done{ opacity:0.4; }
 
+  /* ---------- REPS LOG ---------- */
+  .reps-box{ margin-top:14px; text-align:left; }
+  .reps-title{ font-family:'Baloo 2'; font-weight:700; font-size:12.5px; color:var(--ink-soft); margin-bottom:8px; }
+  .reps-row{ display:flex; align-items:center; gap:10px; padding:8px 2px; border-bottom:1px solid var(--line); }
+  .reps-row:last-child{ border-bottom:none; }
+  .reps-icon{ font-size:17px; width:22px; text-align:center; }
+  .reps-name{ flex:1; font-size:13.5px; font-weight:500; }
+  .reps-stepper{ display:flex; align-items:center; gap:8px; }
+  .reps-stepper button{
+    width:28px; height:28px; border-radius:9px; border:none; background:var(--pink-soft);
+    color:var(--pink-deep); font-family:'Baloo 2'; font-weight:700; font-size:15px; cursor:pointer;
+  }
+  .reps-stepper button:active{ transform:scale(0.9); }
+  .reps-val{ font-family:'Baloo 2'; font-weight:700; font-size:14px; color:var(--ink); min-width:22px; text-align:center; }
+
   /* ---------- SUMMARY ---------- */
   .streak-hero{ text-align:center; padding:22px 0 8px; }
   .streak-num{ font-family:'Baloo 2'; font-weight:800; font-size:52px; color:var(--pink-deep); line-height:1; }
@@ -220,6 +237,31 @@
   .backup-row{ display:flex; gap:8px; }
   .backup-row .btn{ flex:1; font-size:13px; padding:11px 8px; }
 
+  /* ---------- NOTIFICATIONS SETTINGS ---------- */
+  .notif-status{ font-size:12px; color:var(--ink-soft); margin-bottom:10px; padding:9px 11px; background:var(--card-2); border-radius:12px; }
+  .notif-status.on{ color:#2C9C6D; background:var(--mint-soft); }
+  .notif-status.off{ color:#D8446A; background:#FFE3E9; }
+  .toggle-row{ display:flex; align-items:center; justify-content:space-between; padding:10px 2px; border-bottom:1px solid var(--line); }
+  .toggle-row:last-child{ border-bottom:none; }
+  .toggle-label{ font-size:13.5px; font-weight:500; }
+  .toggle-label .tt{ display:block; font-size:11px; color:var(--ink-soft); font-family:'Mali'; margin-top:1px; }
+  .switch{ position:relative; width:44px; height:25px; flex-shrink:0; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .switch .slider{
+    position:absolute; cursor:pointer; inset:0; background:var(--pink-soft);
+    border-radius:20px; transition:.2s;
+  }
+  .switch .slider::before{
+    content:""; position:absolute; width:19px; height:19px; left:3px; bottom:3px;
+    background:#fff; border-radius:50%; transition:.2s; box-shadow:0 1px 3px rgba(0,0,0,0.2);
+  }
+  .switch input:checked + .slider{ background:var(--pink); }
+  .switch input:checked + .slider::before{ transform:translateX(19px); }
+  .interval-select{
+    margin-top:4px; width:100%; padding:9px 12px; border-radius:12px; border:2px solid var(--pink-soft);
+    background:var(--card-2); font-family:'Mali'; font-size:13px; color:var(--ink);
+  }
+
   /* ---------- EDIT MODAL ---------- */
   .modal-overlay{
     position:fixed; inset:0; background:rgba(92,58,82,0.35);
@@ -235,20 +277,6 @@
   .modal-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
   .modal-head .m-date{ font-family:'Baloo 2'; font-weight:700; font-size:16px; color:var(--pink-deep); }
   .modal-close{ background:var(--card-2); border:none; width:30px; height:30px; border-radius:50%; font-size:15px; color:var(--ink-soft); cursor:pointer; }
-
-  .weight-form{ display:flex; gap:8px; margin-bottom:12px; }
-  .weight-form input{
-    flex:1; border:2px solid var(--pink-soft); border-radius:14px; padding:11px 14px;
-    font-family:'Mali'; font-size:15px; color:var(--ink); background:var(--card-2);
-  }
-  .weight-form input:focus{ outline:none; border-color:var(--pink); }
-  .weight-list{ display:flex; flex-direction:column; gap:6px; }
-  .weight-item{ display:flex; justify-content:space-between; font-size:13.5px; padding:8px 10px; background:var(--card-2); border-radius:12px; }
-  .weight-item .wd{ color:var(--ink-soft); }
-  .weight-empty{ font-size:12.5px; color:var(--ink-soft); text-align:center; padding:10px 0; }
-  .trend{ font-family:'Baloo 2'; font-weight:700; font-size:13px; }
-  .trend.down{ color:#2C9C6D; }
-  .trend.up{ color:#D8446A; }
 
   /* ---------- BOTTOM NAV ---------- */
   nav{
@@ -352,6 +380,10 @@
           <button class="btn ghost" id="btnReset">รีเซ็ต</button>
         </div>
         <div class="ex-row" id="exRow"></div>
+        <div class="reps-box">
+          <div class="reps-title">🔢 จำนวนครั้งที่ทำได้วันนี้</div>
+          <div id="repsList"></div>
+        </div>
       </div>
     </section>
 
@@ -367,17 +399,31 @@
         <div class="badge-row" id="badgeRow"></div>
       </div>
       <div class="card">
+        <div class="card-title">🔔 การแจ้งเตือน</div>
+        <div class="notif-status" id="notifStatus">แตะปุ่มด้านล่างเพื่อเปิดการแจ้งเตือน</div>
+        <button class="btn primary" id="btnEnableNotif" style="width:100%;margin-bottom:12px;">เปิดการแจ้งเตือน</button>
+        <div class="toggle-row">
+          <div class="toggle-label">มื้ออาหาร/ออกกำลังกาย<span class="tt">เตือนก่อนถึงเวลา 10 นาที</span></div>
+          <label class="switch"><input type="checkbox" id="toggleMealNotif"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-label">เตือนดื่มน้ำ<span class="tt">08:30–21:00</span></div>
+          <label class="switch"><input type="checkbox" id="toggleWaterNotif"><span class="slider"></span></label>
+        </div>
+        <select class="interval-select" id="waterIntervalSelect">
+          <option value="60">ทุก 1 ชั่วโมง</option>
+          <option value="90">ทุก 1.5 ชั่วโมง</option>
+          <option value="120">ทุก 2 ชั่วโมง</option>
+        </select>
+        <div class="toggle-row">
+          <div class="toggle-label">เสียงเตือนตอนออกกำลังกาย<span class="tt">บี๊บตอนเปลี่ยนช่วง</span></div>
+          <label class="switch"><input type="checkbox" id="toggleSound"><span class="slider"></span></label>
+        </div>
+      </div>
+      <div class="card">
         <div class="card-title">📅 14 วันล่าสุด <span style="font-weight:400;font-size:11px;color:var(--ink-soft)">(แตะเพื่อแก้ไข)</span></div>
         <div class="heat-grid" id="heatGrid"></div>
         <div class="heat-legend"><span>ว่าง</span><span>ครบทุกอย่าง</span></div>
-      </div>
-      <div class="card">
-        <div class="card-title">⚖️ น้ำหนัก</div>
-        <div class="weight-form">
-          <input type="number" id="weightInput" placeholder="กก. เช่น 85.0" step="0.1" inputmode="decimal">
-          <button class="btn primary" id="btnSaveWeight">บันทึก</button>
-        </div>
-        <div class="weight-list" id="weightList"></div>
       </div>
       <div class="card">
         <div class="card-title">💾 สำรองข้อมูล</div>
@@ -426,6 +472,12 @@
     catch(e){ /* storage unavailable (e.g. Claude.ai preview) — state stays in memory only */ }
   }
   let store = loadStore();
+  if(!store.settings){
+    store.settings = { notifMeals:false, notifWater:false, waterInterval:90, sound:true };
+  }
+  if(store.settings.waterInterval === undefined) store.settings.waterInterval = 90;
+  if(store.settings.sound === undefined) store.settings.sound = true;
+  if(!store.lastWaterNotifyAt) store.lastWaterNotifyAt = 0;
 
   function todayKey(d){
     d = d || new Date();
@@ -433,10 +485,146 @@
   }
   function getDay(key){
     if(!store.days[key]) store.days[key] = { meal1:false, water:0, workout:false, meal2:false, sleep:false };
+    if(!store.days[key].reps) store.days[key].reps = [0,0,0,0];
+    if(!store.days[key].notified) store.days[key].notified = {};
     return store.days[key];
   }
   const TKEY = todayKey();
   let today = getDay(TKEY);
+
+  // ============ SOUND (Web Audio beep) ============
+  let audioCtx = null;
+  function ensureAudioCtx(){
+    if(!audioCtx){
+      try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ audioCtx = null; }
+    }
+    if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+  function beep(freq, dur, delay){
+    if(!store.settings.sound) return;
+    const ctx = ensureAudioCtx();
+    if(!ctx) return;
+    const startAt = ctx.currentTime + (delay||0);
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.0001, startAt);
+    gain.gain.exponentialRampToValueAtTime(0.25, startAt+0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, startAt+dur);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(startAt);
+    osc.stop(startAt+dur+0.02);
+  }
+  function beepWorkStart(){ beep(880, 0.15); }
+  function beepRestStart(){ beep(523, 0.15); }
+  function beepFinish(){ beep(660,0.14,0); beep(880,0.14,0.18); beep(1046,0.22,0.36); }
+
+  // ============ NOTIFICATIONS ============
+  const notifStatus = document.getElementById('notifStatus');
+  const btnEnableNotif = document.getElementById('btnEnableNotif');
+  const toggleMealNotif = document.getElementById('toggleMealNotif');
+  const toggleWaterNotif = document.getElementById('toggleWaterNotif');
+  const waterIntervalSelect = document.getElementById('waterIntervalSelect');
+  const toggleSound = document.getElementById('toggleSound');
+
+  function notifSupported(){ return 'Notification' in window; }
+  function renderNotifStatus(){
+    if(!notifSupported()){
+      notifStatus.textContent = 'เบราว์เซอร์นี้ไม่รองรับการแจ้งเตือน';
+      notifStatus.className = 'notif-status off';
+      btnEnableNotif.style.display = 'none';
+      return;
+    }
+    const perm = Notification.permission;
+    if(perm === 'granted'){
+      notifStatus.textContent = '✅ เปิดการแจ้งเตือนแล้ว (ต้องเปิดแท็บนี้ค้างไว้)';
+      notifStatus.className = 'notif-status on';
+      btnEnableNotif.style.display = 'none';
+    }else if(perm === 'denied'){
+      notifStatus.textContent = '🚫 ถูกบล็อกการแจ้งเตือน ไปเปิดในตั้งค่าเบราว์เซอร์';
+      notifStatus.className = 'notif-status off';
+      btnEnableNotif.style.display = 'none';
+    }else{
+      notifStatus.textContent = 'ยังไม่ได้เปิดการแจ้งเตือน';
+      notifStatus.className = 'notif-status';
+      btnEnableNotif.style.display = 'block';
+    }
+  }
+  btnEnableNotif.addEventListener('click', async ()=>{
+    if(!notifSupported()) return;
+    try{
+      const perm = await Notification.requestPermission();
+      renderNotifStatus();
+      if(perm === 'granted'){
+        new Notification('XSexn 🎀', { body:'เปิดการแจ้งเตือนเรียบร้อย! อย่าลืมเปิดแท็บนี้ทิ้งไว้นะ' });
+      }
+    }catch(e){}
+  });
+  function sendNotif(title, body){
+    if(!notifSupported() || Notification.permission !== 'granted') return;
+    try{ new Notification(title, { body, icon: undefined }); }catch(e){}
+  }
+
+  toggleMealNotif.checked = store.settings.notifMeals;
+  toggleWaterNotif.checked = store.settings.notifWater;
+  waterIntervalSelect.value = String(store.settings.waterInterval);
+  toggleSound.checked = store.settings.sound;
+
+  toggleMealNotif.addEventListener('change', ()=>{
+    store.settings.notifMeals = toggleMealNotif.checked;
+    saveStore();
+    if(toggleMealNotif.checked && notifSupported() && Notification.permission !== 'granted'){
+      Notification.requestPermission().then(renderNotifStatus);
+    }
+  });
+  toggleWaterNotif.addEventListener('change', ()=>{
+    store.settings.notifWater = toggleWaterNotif.checked;
+    saveStore();
+    if(toggleWaterNotif.checked && notifSupported() && Notification.permission !== 'granted'){
+      Notification.requestPermission().then(renderNotifStatus);
+    }
+  });
+  waterIntervalSelect.addEventListener('change', ()=>{
+    store.settings.waterInterval = parseInt(waterIntervalSelect.value,10);
+    saveStore();
+  });
+  toggleSound.addEventListener('change', ()=>{
+    store.settings.sound = toggleSound.checked;
+    saveStore();
+  });
+
+  // schedule table for meal/workout reminders: [hour, minute, dayKeyField, title, body]
+  const reminderSchedule = [
+    { h:11, m:20, field:'meal1', title:'🍱 ใกล้เวลามื้อแรกแล้ว', body:'อีก 10 นาทีถึงเวลากินมื้อแรก (11:30–12:00)' },
+    { h:19, m:20, field:'workout', title:'🏃‍♀️ ใกล้เวลาออกกำลังกายแล้ว', body:'อีก 10 นาทีถึงเวลาออกกำลังกาย (19:30)' },
+    { h:20, m:35, field:'meal2', title:'🍲 ใกล้เวลามื้อสองแล้ว', body:'อีก 10 นาทีถึงเวลากินมื้อสอง (20:45)' },
+  ];
+  function checkReminders(now){
+    if(!store.settings.notifMeals) return;
+    const h = now.getHours(), m = now.getMinutes();
+    reminderSchedule.forEach(r=>{
+      if(h === r.h && m === r.m && !today.notified[r.field]){
+        sendNotif(r.title, r.body);
+        today.notified[r.field] = true;
+        saveStore();
+      }
+    });
+  }
+  function checkWaterReminder(now){
+    if(!store.settings.notifWater) return;
+    const h = now.getHours() + now.getMinutes()/60;
+    if(h < 8.5 || h >= 21) return;
+    if(today.water >= WATER_TARGET) return;
+    const nowMs = now.getTime();
+    const intervalMs = store.settings.waterInterval * 60 * 1000;
+    if(nowMs - store.lastWaterNotifyAt >= intervalMs){
+      sendNotif('💧 ถึงเวลาดื่มน้ำแล้ว', `วันนี้ดื่มไป ${today.water}/${WATER_TARGET} แก้ว ลองดื่มอีกแก้วนะ`);
+      store.lastWaterNotifyAt = nowMs;
+      saveStore();
+    }
+  }
 
   // ============ HEADER: DAY + CLOCK ============
   const dayNames = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
@@ -446,6 +634,8 @@
     document.getElementById('clockLabel').textContent =
       String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
     updateNowCard(now);
+    checkReminders(now);
+    checkWaterReminder(now);
   }
 
   const blocks = [
@@ -469,6 +659,7 @@
   }
   updateClock();
   setInterval(updateClock, 30000);
+  renderNotifStatus();
 
   // ============ TABS ============
   const navBtns = [...document.querySelectorAll('.navbtn')];
@@ -565,6 +756,34 @@
     exRow.appendChild(chip);
   });
 
+  // ---- reps log ----
+  const repsList = document.getElementById('repsList');
+  function renderReps(){
+    repsList.innerHTML = '';
+    exercises.forEach((ex,i)=>{
+      const row = document.createElement('div');
+      row.className = 'reps-row';
+      row.innerHTML = `
+        <div class="reps-icon">${ex.icon}</div>
+        <div class="reps-name">${ex.name}</div>
+        <div class="reps-stepper">
+          <button data-i="${i}" data-d="-1">−</button>
+          <div class="reps-val" id="repsVal-${i}">${today.reps[i]}</div>
+          <button data-i="${i}" data-d="1">+</button>
+        </div>`;
+      repsList.appendChild(row);
+    });
+    repsList.querySelectorAll('button').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const i = parseInt(btn.dataset.i,10);
+        const d = parseInt(btn.dataset.d,10);
+        today.reps[i] = Math.max(0, (today.reps[i]||0) + d*5);
+        document.getElementById('repsVal-'+i).textContent = today.reps[i];
+        saveStore();
+      });
+    });
+  }
+
   const timerPhase = document.getElementById('timerPhase');
   const timerMove = document.getElementById('timerMove');
   const ringTime = document.getElementById('ringTime');
@@ -610,12 +829,13 @@
     ts.secs--;
     if(ts.secs < 0){
       if(ts.phase==='work'){
-        if(ts.exIdx < exercises.length-1){ ts.phase='rest'; ts.secs=REST; }
-        else if(ts.round < ROUNDS){ ts.round++; ts.exIdx=0; ts.phase='rest'; ts.secs=REST; }
+        if(ts.exIdx < exercises.length-1){ ts.phase='rest'; ts.secs=REST; beepRestStart(); }
+        else if(ts.round < ROUNDS){ ts.round++; ts.exIdx=0; ts.phase='rest'; ts.secs=REST; beepRestStart(); }
         else { finish(); return; }
       }else if(ts.phase==='rest'){
         ts.exIdx = (ts.exIdx===exercises.length-1) ? 0 : ts.exIdx+1;
         ts.phase='work'; ts.secs=WORK;
+        beepWorkStart();
       }
     }
     renderTimer();
@@ -623,13 +843,15 @@
   function finish(){
     clearInterval(ts.timer); ts.running=false; ts.phase='done';
     btnStart.textContent='เริ่ม'; renderTimer();
+    beepFinish();
   }
   btnStart.addEventListener('click', ()=>{
+    ensureAudioCtx();
     if(ts.running){
       ts.running=false; clearInterval(ts.timer); btnStart.textContent='ทำต่อ';
     }else{
       ts.running=true;
-      if(ts.phase==='idle'||ts.phase==='done'){ ts.phase='work'; ts.round=1; ts.exIdx=0; ts.secs=WORK; }
+      if(ts.phase==='idle'||ts.phase==='done'){ ts.phase='work'; ts.round=1; ts.exIdx=0; ts.secs=WORK; beepWorkStart(); }
       btnStart.textContent='หยุด';
       ts.timer = setInterval(tick,1000);
     }
@@ -775,41 +997,6 @@
   document.getElementById('modalClose').addEventListener('click', ()=> modalOverlay.classList.remove('show'));
   modalOverlay.addEventListener('click', (e)=>{ if(e.target === modalOverlay) modalOverlay.classList.remove('show'); });
 
-  // ============ WEIGHT LOG ============
-  const weightList = document.getElementById('weightList');
-  function renderWeights(){
-    weightList.innerHTML = '';
-    if(!store.weights.length){
-      weightList.innerHTML = '<div class="weight-empty">ยังไม่มีบันทึก — ใส่น้ำหนักแล้วกดบันทึก</div>';
-      return;
-    }
-    const list = store.weights.slice(-6).reverse();
-    list.forEach((w,idx)=>{
-      const item = document.createElement('div');
-      item.className = 'weight-item';
-      let trendHtml = '';
-      const realIdx = store.weights.length - 1 - idx;
-      if(realIdx > 0){
-        const diff = (w.kg - store.weights[realIdx-1].kg).toFixed(1);
-        if(diff < 0) trendHtml = `<span class="trend down">↓ ${Math.abs(diff)}</span>`;
-        else if(diff > 0) trendHtml = `<span class="trend up">↑ ${diff}</span>`;
-        else trendHtml = `<span class="trend">–</span>`;
-      }
-      item.innerHTML = `<span class="wd">${w.date}</span><span>${w.kg} กก.</span>${trendHtml}`;
-      weightList.appendChild(item);
-    });
-  }
-  document.getElementById('btnSaveWeight').addEventListener('click', ()=>{
-    const input = document.getElementById('weightInput');
-    const val = parseFloat(input.value);
-    if(!val || val <= 0) return;
-    const dateStr = new Date().toLocaleDateString('th-TH', {day:'2-digit', month:'2-digit'});
-    store.weights.push({ date:dateStr, kg:val });
-    saveStore();
-    input.value = '';
-    renderWeights();
-  });
-
   // ============ BACKUP: EXPORT / IMPORT ============
   document.getElementById('btnExport').addEventListener('click', ()=>{
     const blob = new Blob([JSON.stringify(store, null, 2)], { type:'application/json' });
@@ -835,10 +1022,15 @@
           store = data;
           if(store.freezeCredits === undefined) store.freezeCredits = 1;
           if(!store.maxStreak) store.maxStreak = 0;
-          if(!store.weights) store.weights = [];
+          if(!store.settings) store.settings = { notifMeals:false, notifWater:false, waterInterval:90, sound:true };
+          if(!store.lastWaterNotifyAt) store.lastWaterNotifyAt = 0;
           today = getDay(TKEY);
           saveStore();
-          renderTasks(); renderWater(); renderStreak(); renderHeat(); renderWeights();
+          toggleMealNotif.checked = store.settings.notifMeals;
+          toggleWaterNotif.checked = store.settings.notifWater;
+          waterIntervalSelect.value = String(store.settings.waterInterval);
+          toggleSound.checked = store.settings.sound;
+          renderTasks(); renderWater(); renderStreak(); renderHeat(); renderReps();
           alert('นำเข้าข้อมูลสำเร็จ 🎀');
         } else {
           alert('ไฟล์นี้ใช้ไม่ได้ ลองเลือกไฟล์ backup ที่ส่งออกจากแอปนี้');
@@ -855,9 +1047,9 @@
   renderTasks();
   renderWater();
   renderTimer();
+  renderReps();
   renderStreak();
   renderHeat();
-  renderWeights();
 
 })();
 </script>

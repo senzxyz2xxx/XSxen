@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#FF8FB8">
+<title>กู้ร่าง 🎀</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFE9F2;
+    --card:#FFFFFF;
+    --card-2:#FFF3F8;
+    --pink:#FF7FAE;
+    --pink-deep:#E8548A;
+    --pink-soft:#FFD3E6;
+    --lav:#B9A6F5;
+    --lav-soft:#E9E2FF;
+    --mint:#7FDDB0;
+    --mint-soft:#D9F7E8;
+    --sky:#7FC4EE;
+    --sky-soft:#DCEFFC;
+    --ink:#5C3A52;
+    --ink-soft:#A98BA0;
+    --line: rgba(92,58,82,0.10);
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  html,body{ height:100%; }
+  body{
+    background:var(--bg);
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(255,255,255,0.7) 0, transparent 40%),
+      radial-gradient(circle at 90% 18%, rgba(185,166,245,0.25) 0, transparent 45%);
+    color:var(--ink);
+    font-family:'Mali', sans-serif;
+    overscroll-behavior:none;
+  }
+  .display{ font-family:'Baloo 2', sans-serif; }
+  .app{
+    max-width:430px;
+    margin:0 auto;
+    min-height:100vh;
+    position:relative;
+    padding-bottom:88px;
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    padding:18px 18px 14px;
+    position:relative;
+    overflow:hidden;
+  }
+  .ears{
+    position:absolute; top:-30px; left:50%; transform:translateX(-50%);
+    display:flex; gap:34px; z-index:0;
+  }
+  .ear{
+    width:34px; height:58px;
+    background:var(--pink-soft);
+    border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+  }
+  .ear.r{ background:var(--lav-soft); }
+  .head-row{
+    position:relative; z-index:1;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    padding-top:14px;
+  }
+  .greet .day{ font-family:'Baloo 2',sans-serif; font-weight:700; font-size:20px; color:var(--pink-deep); }
+  .greet .clock{ font-size:14px; color:var(--ink-soft); margin-top:2px; }
+  .streak-badge{
+    background:var(--card);
+    border-radius:16px;
+    padding:8px 12px;
+    display:flex; align-items:center; gap:6px;
+    box-shadow:0 4px 14px rgba(232,84,138,0.12);
+    font-family:'Baloo 2',sans-serif; font-weight:700; font-size:15px;
+    color:var(--pink-deep);
+  }
+
+  main{ padding:0 16px; }
+  .tabpanel{ display:none; animation:fade .25s ease; }
+  .tabpanel.active{ display:block; }
+  @keyframes fade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  /* ---------- CARD BASE ---------- */
+  .card{
+    background:var(--card);
+    border-radius:20px;
+    padding:16px;
+    margin-bottom:14px;
+    box-shadow:0 6px 18px rgba(92,58,82,0.06);
+  }
+  .card-title{
+    font-family:'Baloo 2',sans-serif; font-weight:700; font-size:14px;
+    color:var(--pink-deep);
+    display:flex; align-items:center; gap:6px;
+    margin-bottom:10px;
+  }
+
+  /* ---------- NOW CARD ---------- */
+  .now-card{
+    background:linear-gradient(135deg, var(--pink) 0%, var(--pink-deep) 100%);
+    color:#fff;
+    border-radius:22px;
+    padding:18px 18px 20px;
+    margin-bottom:14px;
+    box-shadow:0 10px 24px rgba(232,84,138,0.28);
+  }
+  .now-label{ font-size:12px; opacity:0.85; letter-spacing:0.04em; }
+  .now-title{ font-family:'Baloo 2',sans-serif; font-weight:700; font-size:21px; margin-top:4px; }
+  .now-sub{ font-size:13px; opacity:0.92; margin-top:4px; }
+
+  /* ---------- CHECKLIST ---------- */
+  .task-row{
+    display:flex; align-items:center; gap:12px;
+    padding:11px 4px;
+    border-bottom:1px solid var(--line);
+  }
+  .task-row:last-child{ border-bottom:none; }
+  .task-check{
+    width:26px; height:26px; border-radius:9px;
+    border:2px solid var(--pink-soft);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; cursor:pointer;
+    transition:all .15s ease;
+  }
+  .task-check.checked{ background:var(--pink); border-color:var(--pink); }
+  .task-check.checked::after{ content:"✓"; color:#fff; font-weight:700; font-size:14px; }
+  .task-icon{ font-size:19px; width:22px; text-align:center; }
+  .task-label{ flex:1; font-size:14.5px; font-weight:500; }
+  .task-label .t{ display:block; font-size:11px; color:var(--ink-soft); font-family:'Baloo 2'; margin-top:1px; }
+
+  /* ---------- WATER ---------- */
+  .water-row{ display:flex; gap:7px; flex-wrap:wrap; margin-top:4px; }
+  .drop{
+    width:34px; height:34px; border-radius:50%;
+    background:var(--sky-soft);
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px; cursor:pointer;
+    transition:transform .12s ease, background .15s ease;
+  }
+  .drop.filled{ background:var(--sky); }
+  .drop:active{ transform:scale(0.85); }
+  .water-count{ font-family:'Baloo 2'; font-weight:700; color:var(--sky); font-size:13px; margin-top:8px; }
+
+  /* ---------- MEAL CARDS ---------- */
+  .meal-card{ border-radius:20px; padding:16px; margin-bottom:12px; background:var(--card); box-shadow:0 6px 18px rgba(92,58,82,0.06); }
+  .meal-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .meal-time{ font-family:'Baloo 2'; font-weight:700; color:var(--pink-deep); font-size:15px; }
+  .meal-list{ list-style:none; }
+  .meal-list li{ font-size:13.5px; padding:4px 0 4px 18px; position:relative; color:var(--ink); }
+  .meal-list li::before{ content:"🍚"; position:absolute; left:0; font-size:11px; }
+  .meal-rule{ margin-top:8px; font-size:12px; color:var(--ink-soft); background:var(--card-2); padding:7px 10px; border-radius:10px; }
+
+  .rule-strip{ display:flex; gap:10px; }
+  .rule-pill{ flex:1; border-radius:16px; padding:12px; font-size:12.5px; }
+  .rule-pill.no{ background:#FFE3E9; color:#D8446A; }
+  .rule-pill.yes{ background:var(--mint-soft); color:#2C9C6D; }
+  .rule-pill b{ display:block; font-family:'Baloo 2'; font-size:13px; margin-bottom:5px; }
+
+  /* ---------- WEEK STRIP ---------- */
+  .week-row{ display:flex; gap:6px; margin-bottom:14px; }
+  .wchip{ flex:1; text-align:center; padding:9px 2px; border-radius:12px; background:var(--card-2); }
+  .wchip.on{ background:var(--mint-soft); }
+  .wchip.today{ outline:2px solid var(--pink); }
+  .wchip .wd{ font-family:'Baloo 2'; font-weight:700; font-size:12px; color:var(--ink); }
+  .wchip .we{ font-size:13px; margin-top:2px; }
+
+  /* ---------- TIMER ---------- */
+  .timer-box{ text-align:center; }
+  .timer-tag{ font-size:12px; color:var(--ink-soft); }
+  .timer-name{ font-family:'Baloo 2'; font-weight:700; font-size:18px; color:var(--pink-deep); min-height:1.3em; margin:4px 0; }
+  .ring-wrap{ position:relative; width:150px; height:150px; margin:14px auto; }
+  .ring-wrap svg{ transform:rotate(-90deg); width:100%; height:100%; }
+  .ring-bg{ fill:none; stroke:var(--pink-soft); stroke-width:12; }
+  .ring-fg{ fill:none; stroke:var(--pink); stroke-width:12; stroke-linecap:round; transition:stroke-dashoffset 1s linear, stroke .2s; }
+  .ring-time{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Baloo 2'; font-size:28px; font-weight:700; color:var(--ink); }
+  .timer-btns{ display:flex; gap:8px; justify-content:center; margin-top:6px; }
+  .btn{
+    font-family:'Baloo 2'; font-weight:700; font-size:14px;
+    padding:11px 20px; border-radius:14px; border:none; cursor:pointer;
+  }
+  .btn.primary{ background:var(--pink); color:#fff; }
+  .btn.ghost{ background:var(--card-2); color:var(--ink); }
+  .ex-row{ display:flex; gap:8px; margin-top:14px; overflow-x:auto; padding-bottom:2px; }
+  .ex-chip{
+    flex:0 0 auto; background:var(--card-2); border-radius:14px; padding:8px 12px;
+    font-size:12.5px; color:var(--ink-soft); white-space:nowrap;
+    display:flex; align-items:center; gap:6px;
+  }
+  .ex-chip.active{ background:var(--pink); color:#fff; }
+  .ex-chip.done{ opacity:0.4; }
+
+  /* ---------- SUMMARY ---------- */
+  .streak-hero{ text-align:center; padding:22px 0 8px; }
+  .streak-num{ font-family:'Baloo 2'; font-weight:800; font-size:52px; color:var(--pink-deep); line-height:1; }
+  .streak-sub{ font-size:13px; color:var(--ink-soft); margin-top:4px; }
+  .heat-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-top:6px; }
+  .heat-cell{ aspect-ratio:1; border-radius:7px; background:var(--card-2); }
+  .heat-cell.l1{ background:#FFD3E6; }
+  .heat-cell.l2{ background:#FFA8CB; }
+  .heat-cell.l3{ background:var(--pink); }
+  .heat-legend{ display:flex; justify-content:space-between; margin-top:8px; font-size:10.5px; color:var(--ink-soft); }
+
+  .weight-form{ display:flex; gap:8px; margin-bottom:12px; }
+  .weight-form input{
+    flex:1; border:2px solid var(--pink-soft); border-radius:14px; padding:11px 14px;
+    font-family:'Mali'; font-size:15px; color:var(--ink); background:var(--card-2);
+  }
+  .weight-form input:focus{ outline:none; border-color:var(--pink); }
+  .weight-list{ display:flex; flex-direction:column; gap:6px; }
+  .weight-item{ display:flex; justify-content:space-between; font-size:13.5px; padding:8px 10px; background:var(--card-2); border-radius:12px; }
+  .weight-item .wd{ color:var(--ink-soft); }
+  .weight-empty{ font-size:12.5px; color:var(--ink-soft); text-align:center; padding:10px 0; }
+  .trend{ font-family:'Baloo 2'; font-weight:700; font-size:13px; }
+  .trend.down{ color:#2C9C6D; }
+  .trend.up{ color:#D8446A; }
+
+  /* ---------- BOTTOM NAV ---------- */
+  nav{
+    position:fixed; left:0; right:0; bottom:0;
+    max-width:430px; margin:0 auto;
+    background:var(--card);
+    border-radius:24px 24px 0 0;
+    box-shadow:0 -6px 20px rgba(92,58,82,0.12);
+    display:flex;
+    padding:10px 6px calc(10px + env(safe-area-inset-bottom));
+    z-index:10;
+  }
+  .navbtn{
+    flex:1; background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:3px;
+    padding:6px 2px; border-radius:14px; cursor:pointer; color:var(--ink-soft);
+  }
+  .navbtn .ic{ font-size:20px; }
+  .navbtn .lb{ font-size:10.5px; font-family:'Baloo 2'; font-weight:600; }
+  .navbtn.active{ color:var(--pink-deep); background:var(--pink-soft); }
+
+  ::-webkit-scrollbar{ display:none; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="ears"><div class="ear"></div><div class="ear r"></div></div>
+    <div class="head-row">
+      <div class="greet">
+        <div class="day display" id="dayLabel">—</div>
+        <div class="clock" id="clockLabel">--:--</div>
+      </div>
+      <div class="streak-badge">🔥 <span id="streakMini">0</span></div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- TAB: TODAY -->
+    <section class="tabpanel active" id="tab-today">
+      <div class="now-card">
+        <div class="now-label">ตอนนี้</div>
+        <div class="now-title" id="nowTitle">—</div>
+        <div class="now-sub" id="nowSub">—</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📋 ภารกิจวันนี้</div>
+        <div id="taskList"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">💧 น้ำ (เป้า 8 แก้ว)</div>
+        <div class="water-row" id="waterRow"></div>
+        <div class="water-count" id="waterCount">0 / 8</div>
+      </div>
+    </section>
+
+    <!-- TAB: MEALS -->
+    <section class="tabpanel" id="tab-meals">
+      <div class="meal-card">
+        <div class="meal-top"><span class="meal-time">🍱 11:30 – 12:00</span></div>
+        <ul class="meal-list">
+          <li>กะเพราไก่/หมูชิ้น (ไม่เอาไข่ดาว)</li>
+          <li>ข้าวผัดอกไก่ น้ำมันน้อย</li>
+          <li>ก๋วยเตี๋ยวน้ำใสไก่ฉีก</li>
+        </ul>
+        <div class="meal-rule">กินข้าวครึ่งจาน เน้นกับ</div>
+      </div>
+      <div class="meal-card">
+        <div class="meal-top"><span class="meal-time">🍲 20:45</span></div>
+        <ul class="meal-list">
+          <li>ลาบไก่/หมู ไม่มัน</li>
+          <li>ต้มยำน้ำใส / แกงจืด</li>
+          <li>เซเว่น: อกไก่ + ไข่ต้ม 2 ฟอง + สลัด</li>
+        </ul>
+        <div class="meal-rule">ห้ามฟาสต์ฟู้ดมื้อดึก</div>
+      </div>
+      <div class="rule-strip">
+        <div class="rule-pill no"><b>❌ ตัด</b>น้ำหวาน ชานม น้ำอัดลม</div>
+        <div class="rule-pill yes"><b>✅ ดื่มได้</b>น้ำเปล่า กาแฟดำ</div>
+      </div>
+    </section>
+
+    <!-- TAB: WORKOUT -->
+    <section class="tabpanel" id="tab-workout">
+      <div class="week-row" id="weekRow"></div>
+      <div class="card timer-box">
+        <div class="timer-tag" id="timerPhase">พร้อมเริ่ม</div>
+        <div class="timer-name" id="timerMove">Warm-up 5 นาที</div>
+        <div class="ring-wrap">
+          <svg viewBox="0 0 150 150">
+            <circle class="ring-bg" cx="75" cy="75" r="63"></circle>
+            <circle class="ring-fg" id="ringFg" cx="75" cy="75" r="63"></circle>
+          </svg>
+          <div class="ring-time" id="ringTime">00:45</div>
+        </div>
+        <div class="timer-btns">
+          <button class="btn primary" id="btnStart">เริ่ม</button>
+          <button class="btn ghost" id="btnReset">รีเซ็ต</button>
+        </div>
+        <div class="ex-row" id="exRow"></div>
+      </div>
+    </section>
+
+    <!-- TAB: SUMMARY -->
+    <section class="tabpanel" id="tab-summary">
+      <div class="card streak-hero">
+        <div class="streak-num" id="streakBig">0</div>
+        <div class="streak-sub">วันติดต่อกัน 🔥</div>
+      </div>
+      <div class="card">
+        <div class="card-title">📅 14 วันล่าสุด</div>
+        <div class="heat-grid" id="heatGrid"></div>
+        <div class="heat-legend"><span>ว่าง</span><span>ครบทุกอย่าง</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title">⚖️ น้ำหนัก</div>
+        <div class="weight-form">
+          <input type="number" id="weightInput" placeholder="กก. เช่น 85.0" step="0.1" inputmode="decimal">
+          <button class="btn primary" id="btnSaveWeight">บันทึก</button>
+        </div>
+        <div class="weight-list" id="weightList"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav>
+    <button class="navbtn active" data-tab="today"><span class="ic">🏠</span><span class="lb">วันนี้</span></button>
+    <button class="navbtn" data-tab="meals"><span class="ic">🍙</span><span class="lb">มื้ออาหาร</span></button>
+    <button class="navbtn" data-tab="workout"><span class="ic">🏃‍♀️</span><span class="lb">ออกกำลังกาย</span></button>
+    <button class="navbtn" data-tab="summary"><span class="ic">📈</span><span class="lb">สรุป</span></button>
+  </nav>
+
+</div>
+
+<script>
+(function(){
+
+  // ============ STORAGE ============
+  const STORE_KEY = 'gururang_v1';
+  function loadStore(){
+    try{
+      const raw = localStorage.getItem(STORE_KEY);
+      return raw ? JSON.parse(raw) : { days:{}, weights:[] };
+    }catch(e){ return { days:{}, weights:[] }; }
+  }
+  function saveStore(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(store)); }
+    catch(e){ /* storage unavailable (e.g. Claude.ai preview) — state stays in memory only */ }
+  }
+  let store = loadStore();
+
+  function todayKey(d){
+    d = d || new Date();
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  }
+  function getDay(key){
+    if(!store.days[key]) store.days[key] = { meal1:false, water:0, workout:false, meal2:false, sleep:false };
+    return store.days[key];
+  }
+  const TKEY = todayKey();
+  const today = getDay(TKEY);
+
+  // ============ HEADER: DAY + CLOCK ============
+  const dayNames = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+  function updateClock(){
+    const now = new Date();
+    document.getElementById('dayLabel').textContent = 'วัน'+dayNames[now.getDay()];
+    document.getElementById('clockLabel').textContent =
+      String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    updateNowCard(now);
+  }
+
+  const blocks = [
+    { s:1, e:8.5, title:'😴 เวลานอน', sub:'หลับให้ลึก ครบ 7.5 ชม.' },
+    { s:8.5, e:11.5, title:'🌤️ เตรียมตัว', sub:'อีกไม่นานถึงมื้อแรก' },
+    { s:11.5, e:12, title:'🍱 กินมื้อแรก', sub:'เน้นโปรตีน ครึ่งจาน' },
+    { s:12, e:15, title:'📚 พัก / เตรียมไปเรียน', sub:'ดื่มน้ำเปล่าไว้ก่อน' },
+    { s:15, e:19, title:'🏫 กำลังเรียน', sub:'พกน้ำเปล่า ห้ามน้ำหวาน' },
+    { s:19, e:19.5, title:'🚌 เดินทางกลับ', sub:'ใกล้เวลาออกกำลังกาย' },
+    { s:19.5, e:20.25, title:'🏃‍♀️ เวลาออกกำลังกาย', sub:'ไปที่แท็บออกกำลังกายเลย' },
+    { s:20.25, e:20.75, title:'🚿 อาบน้ำพัก', sub:'ใกล้มื้อสองแล้ว' },
+    { s:20.75, e:21.25, title:'🍲 กินมื้อสอง', sub:'ห้ามฟาสต์ฟู้ด' },
+    { s:21.25, e:24, title:'🌙 เวลาส่วนตัว', sub:'เตรียมเข้านอนตรงเวลา' },
+    { s:0, e:1, title:'🌙 ใกล้เวลานอน', sub:'ปิดจอ เตรียมหลับ' },
+  ];
+  function updateNowCard(now){
+    const h = now.getHours() + now.getMinutes()/60;
+    const b = blocks.find(b => h >= b.s && h < b.e) || blocks[0];
+    document.getElementById('nowTitle').textContent = b.title;
+    document.getElementById('nowSub').textContent = b.sub;
+  }
+  updateClock();
+  setInterval(updateClock, 30000);
+
+  // ============ TABS ============
+  const navBtns = [...document.querySelectorAll('.navbtn')];
+  navBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      navBtns.forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.tabpanel').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ============ TASK LIST ============
+  const tasks = [
+    { key:'meal1', icon:'🍱', label:'มื้อแรก', t:'11:30–12:00' },
+    { key:'workout', icon:'🏃‍♀️', label:'ออกกำลังกาย', t:'19:30–20:15' },
+    { key:'meal2', icon:'🍲', label:'มื้อสอง', t:'20:45' },
+    { key:'sleep', icon:'😴', label:'นอนครบ 7-8 ชม.', t:'01:00–08:30' },
+  ];
+  const taskList = document.getElementById('taskList');
+  function renderTasks(){
+    taskList.innerHTML = '';
+    tasks.forEach(tk=>{
+      const row = document.createElement('div');
+      row.className = 'task-row';
+      const checked = today[tk.key] ? 'checked' : '';
+      row.innerHTML = `
+        <div class="task-check ${checked}" data-key="${tk.key}"></div>
+        <div class="task-icon">${tk.icon}</div>
+        <div class="task-label">${tk.label}<span class="t">${tk.t}</span></div>`;
+      taskList.appendChild(row);
+    });
+    taskList.querySelectorAll('.task-check').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        const k = el.dataset.key;
+        today[k] = !today[k];
+        saveStore();
+        renderTasks();
+        renderStreak();
+        renderHeat();
+      });
+    });
+  }
+
+  // ============ WATER ============
+  const waterRow = document.getElementById('waterRow');
+  const WATER_TARGET = 8;
+  function renderWater(){
+    waterRow.innerHTML = '';
+    for(let i=0;i<WATER_TARGET;i++){
+      const d = document.createElement('div');
+      d.className = 'drop' + (i < today.water ? ' filled' : '');
+      d.textContent = '💧';
+      d.addEventListener('click', ()=>{
+        today.water = (i < today.water) ? i : i+1;
+        if(today.water > WATER_TARGET) today.water = WATER_TARGET;
+        saveStore();
+        renderWater();
+      });
+      waterRow.appendChild(d);
+    }
+    document.getElementById('waterCount').textContent = today.water+' / '+WATER_TARGET;
+  }
+
+  // ============ WEEK STRIP (workout tab) ============
+  const weekDays = [
+    {n:'จ', on:true},{n:'อ', on:true},{n:'พ', on:false},
+    {n:'พฤ', on:true},{n:'ศ', on:true},{n:'ส', on:true},{n:'อา', on:false},
+  ];
+  const weekRow = document.getElementById('weekRow');
+  const jsToRowIdx = [6,0,1,2,3,4,5]; // JS getDay(): 0=Sun ... map to our array index (Mon..Sun)
+  const todayRowIdx = jsToRowIdx[new Date().getDay()];
+  weekDays.forEach((d,i)=>{
+    const chip = document.createElement('div');
+    chip.className = 'wchip' + (d.on?' on':'') + (i===todayRowIdx?' today':'');
+    chip.innerHTML = `<div class="wd">${d.n}</div><div class="we">${d.on?'🏃‍♀️':'🌙'}</div>`;
+    weekRow.appendChild(chip);
+  });
+
+  // ============ WORKOUT TIMER ============
+  const exercises = [
+    {name:'Squat', icon:'🦵'},
+    {name:'Shadow Boxing', icon:'🥊'},
+    {name:'Push-up', icon:'💪'},
+    {name:'Plank', icon:'🧘‍♀️'},
+  ];
+  const WORK=45, REST=15, ROUNDS=3;
+  const exRow = document.getElementById('exRow');
+  exercises.forEach((ex,i)=>{
+    const chip = document.createElement('div');
+    chip.className = 'ex-chip';
+    chip.id = 'ex-'+i;
+    chip.innerHTML = `<span>${ex.icon}</span><span>${ex.name}</span>`;
+    exRow.appendChild(chip);
+  });
+
+  const timerPhase = document.getElementById('timerPhase');
+  const timerMove = document.getElementById('timerMove');
+  const ringTime = document.getElementById('ringTime');
+  const ringFg = document.getElementById('ringFg');
+  const btnStart = document.getElementById('btnStart');
+  const btnReset = document.getElementById('btnReset');
+  const RLEN = 2*Math.PI*63;
+  ringFg.style.strokeDasharray = RLEN;
+  ringFg.style.strokeDashoffset = 0;
+
+  let ts = { running:false, round:1, exIdx:0, phase:'idle', secs:WORK, timer:null };
+  function fmt(s){ return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); }
+
+  function renderTimer(){
+    ringTime.textContent = fmt(ts.secs);
+    const total = ts.phase==='rest' ? REST : WORK;
+    ringFg.style.strokeDashoffset = RLEN*(1-ts.secs/total);
+    ringFg.style.stroke = ts.phase==='rest' ? 'var(--lav)' : 'var(--pink)';
+
+    if(ts.phase==='idle'){
+      timerPhase.textContent = 'พร้อมเริ่ม';
+      timerMove.textContent = 'Warm-up 5 นาที';
+    }else if(ts.phase==='work'){
+      timerPhase.textContent = `รอบ ${ts.round}/${ROUNDS}`;
+      timerMove.textContent = exercises[ts.exIdx].icon+' '+exercises[ts.exIdx].name;
+    }else if(ts.phase==='rest'){
+      timerPhase.textContent = 'พัก';
+      timerMove.textContent = '💨 หายใจลึกๆ';
+    }else if(ts.phase==='done'){
+      timerPhase.textContent = 'เสร็จแล้ว!';
+      timerMove.textContent = '🎉 ยืดกล้ามเนื้อ 5 นาที';
+      today.workout = true; saveStore(); renderTasks(); renderStreak(); renderHeat();
+    }
+
+    exercises.forEach((ex,i)=>{
+      const el = document.getElementById('ex-'+i);
+      el.classList.toggle('active', ts.phase==='work' && i===ts.exIdx);
+      el.classList.toggle('done', ts.phase!=='idle' && (ts.round>1 || i<ts.exIdx || ts.phase==='done'));
+    });
+  }
+
+  function tick(){
+    ts.secs--;
+    if(ts.secs < 0){
+      if(ts.phase==='work'){
+        if(ts.exIdx < exercises.length-1){ ts.phase='rest'; ts.secs=REST; }
+        else if(ts.round < ROUNDS){ ts.round++; ts.exIdx=0; ts.phase='rest'; ts.secs=REST; }
+        else { finish(); return; }
+      }else if(ts.phase==='rest'){
+        ts.exIdx = (ts.exIdx===exercises.length-1) ? 0 : ts.exIdx+1;
+        ts.phase='work'; ts.secs=WORK;
+      }
+    }
+    renderTimer();
+  }
+  function finish(){
+    clearInterval(ts.timer); ts.running=false; ts.phase='done';
+    btnStart.textContent='เริ่ม'; renderTimer();
+  }
+  btnStart.addEventListener('click', ()=>{
+    if(ts.running){
+      ts.running=false; clearInterval(ts.timer); btnStart.textContent='ทำต่อ';
+    }else{
+      ts.running=true;
+      if(ts.phase==='idle'||ts.phase==='done'){ ts.phase='work'; ts.round=1; ts.exIdx=0; ts.secs=WORK; }
+      btnStart.textContent='หยุด';
+      ts.timer = setInterval(tick,1000);
+    }
+    renderTimer();
+  });
+  btnReset.addEventListener('click', ()=>{
+    clearInterval(ts.timer);
+    ts = { running:false, round:1, exIdx:0, phase:'idle', secs:WORK, timer:null };
+    btnStart.textContent='เริ่ม'; renderTimer();
+  });
+
+  // ============ STREAK ============
+  function computeStreak(){
+    let n = 0;
+    let d = new Date();
+    while(true){
+      const k = todayKey(d);
+      const rec = store.days[k];
+      const complete = rec && rec.meal1 && rec.workout && rec.meal2 && rec.sleep;
+      if(complete){ n++; d.setDate(d.getDate()-1); }
+      else break;
+    }
+    return n;
+  }
+  function renderStreak(){
+    const n = computeStreak();
+    document.getElementById('streakMini').textContent = n;
+    document.getElementById('streakBig').textContent = n;
+  }
+
+  // ============ HEATMAP ============
+  const heatGrid = document.getElementById('heatGrid');
+  function renderHeat(){
+    heatGrid.innerHTML = '';
+    for(let i=13;i>=0;i--){
+      const d = new Date();
+      d.setDate(d.getDate()-i);
+      const k = todayKey(d);
+      const rec = store.days[k];
+      let level = 0;
+      if(rec){
+        const count = [rec.meal1, rec.workout, rec.meal2, rec.sleep].filter(Boolean).length;
+        level = count===0 ? 0 : count<=1 ? 1 : count<=2 ? 1 : count<=3 ? 2 : 3;
+      }
+      const cell = document.createElement('div');
+      cell.className = 'heat-cell' + (level>0 ? ' l'+level : '');
+      heatGrid.appendChild(cell);
+    }
+  }
+
+  // ============ WEIGHT LOG ============
+  const weightList = document.getElementById('weightList');
+  function renderWeights(){
+    weightList.innerHTML = '';
+    if(!store.weights.length){
+      weightList.innerHTML = '<div class="weight-empty">ยังไม่มีบันทึก — ใส่น้ำหนักแล้วกดบันทึก</div>';
+      return;
+    }
+    const list = store.weights.slice(-6).reverse();
+    list.forEach((w,idx)=>{
+      const item = document.createElement('div');
+      item.className = 'weight-item';
+      let trendHtml = '';
+      const realIdx = store.weights.length - 1 - idx;
+      if(realIdx > 0){
+        const diff = (w.kg - store.weights[realIdx-1].kg).toFixed(1);
+        if(diff < 0) trendHtml = `<span class="trend down">↓ ${Math.abs(diff)}</span>`;
+        else if(diff > 0) trendHtml = `<span class="trend up">↑ ${diff}</span>`;
+        else trendHtml = `<span class="trend">–</span>`;
+      }
+      item.innerHTML = `<span class="wd">${w.date}</span><span>${w.kg} กก.</span>${trendHtml}`;
+      weightList.appendChild(item);
+    });
+  }
+  document.getElementById('btnSaveWeight').addEventListener('click', ()=>{
+    const input = document.getElementById('weightInput');
+    const val = parseFloat(input.value);
+    if(!val || val <= 0) return;
+    const dateStr = new Date().toLocaleDateString('th-TH', {day:'2-digit', month:'2-digit'});
+    store.weights.push({ date:dateStr, kg:val });
+    saveStore();
+    input.value = '';
+    renderWeights();
+  });
+
+  // ============ INIT ============
+  renderTasks();
+  renderWater();
+  renderTimer();
+  renderStreak();
+  renderHeat();
+  renderWeights();
+
+})();
+</script>
+</body>
+</html>

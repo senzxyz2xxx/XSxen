@@ -202,6 +202,39 @@
   .heat-cell.l2{ background:#FFA8CB; }
   .heat-cell.l3{ background:var(--pink); }
   .heat-legend{ display:flex; justify-content:space-between; margin-top:8px; font-size:10.5px; color:var(--ink-soft); }
+  .heat-cell{ cursor:pointer; position:relative; }
+  .heat-cell.frozen{ background:var(--sky-soft); }
+  .heat-cell.frozen::after{ content:"❄"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:9px; }
+  .heat-cell.today{ box-shadow:inset 0 0 0 2px var(--pink-deep); }
+
+  .freeze-line{ display:flex; align-items:center; justify-content:center; gap:6px; font-size:12.5px; color:var(--sky); margin-top:4px; }
+
+  /* ---------- BADGES ---------- */
+  .badge-row{ display:flex; gap:10px; }
+  .badge{ flex:1; text-align:center; padding:14px 6px; border-radius:16px; background:var(--card-2); opacity:0.45; }
+  .badge.earned{ background:var(--mint-soft); opacity:1; }
+  .badge .b-icon{ font-size:26px; }
+  .badge .b-label{ font-family:'Baloo 2'; font-weight:700; font-size:11.5px; margin-top:4px; color:var(--ink); }
+
+  /* ---------- BACKUP ---------- */
+  .backup-row{ display:flex; gap:8px; }
+  .backup-row .btn{ flex:1; font-size:13px; padding:11px 8px; }
+
+  /* ---------- EDIT MODAL ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(92,58,82,0.35);
+    display:none; align-items:flex-end; justify-content:center; z-index:50;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal-card{
+    background:var(--card); width:100%; max-width:430px;
+    border-radius:24px 24px 0 0; padding:20px 18px calc(20px + env(safe-area-inset-bottom));
+    animation:slideUp .2s ease;
+  }
+  @keyframes slideUp{ from{ transform:translateY(24px); opacity:0; } to{ transform:translateY(0); opacity:1; } }
+  .modal-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .modal-head .m-date{ font-family:'Baloo 2'; font-weight:700; font-size:16px; color:var(--pink-deep); }
+  .modal-close{ background:var(--card-2); border:none; width:30px; height:30px; border-radius:50%; font-size:15px; color:var(--ink-soft); cursor:pointer; }
 
   .weight-form{ display:flex; gap:8px; margin-bottom:12px; }
   .weight-form input{
@@ -327,9 +360,14 @@
       <div class="card streak-hero">
         <div class="streak-num" id="streakBig">0</div>
         <div class="streak-sub">วันติดต่อกัน 🔥</div>
+        <div class="freeze-line">❄️ ตั๋วกันพลาดเหลือ <span id="freezeCount">1</span> ใบ (เติมทุกวันจันทร์)</div>
       </div>
       <div class="card">
-        <div class="card-title">📅 14 วันล่าสุด</div>
+        <div class="card-title">🏅 เหรียญรางวัล</div>
+        <div class="badge-row" id="badgeRow"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">📅 14 วันล่าสุด <span style="font-weight:400;font-size:11px;color:var(--ink-soft)">(แตะเพื่อแก้ไข)</span></div>
         <div class="heat-grid" id="heatGrid"></div>
         <div class="heat-legend"><span>ว่าง</span><span>ครบทุกอย่าง</span></div>
       </div>
@@ -341,6 +379,14 @@
         </div>
         <div class="weight-list" id="weightList"></div>
       </div>
+      <div class="card">
+        <div class="card-title">💾 สำรองข้อมูล</div>
+        <div class="backup-row">
+          <button class="btn ghost" id="btnExport">ส่งออกไฟล์</button>
+          <button class="btn ghost" id="btnImportTrigger">นำเข้าไฟล์</button>
+        </div>
+        <input type="file" id="importFile" accept="application/json" style="display:none">
+      </div>
     </section>
 
   </main>
@@ -351,6 +397,16 @@
     <button class="navbtn" data-tab="workout"><span class="ic">🏃‍♀️</span><span class="lb">ออกกำลังกาย</span></button>
     <button class="navbtn" data-tab="summary"><span class="ic">📈</span><span class="lb">สรุป</span></button>
   </nav>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div class="m-date" id="modalDate">—</div>
+        <button class="modal-close" id="modalClose">✕</button>
+      </div>
+      <div id="modalTasks"></div>
+    </div>
+  </div>
 
 </div>
 
@@ -380,7 +436,7 @@
     return store.days[key];
   }
   const TKEY = todayKey();
-  const today = getDay(TKEY);
+  let today = getDay(TKEY);
 
   // ============ HEADER: DAY + CLOCK ============
   const dayNames = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
@@ -585,23 +641,76 @@
     btnStart.textContent='เริ่ม'; renderTimer();
   });
 
-  // ============ STREAK ============
+  // ============ STREAK (with weekly freeze protection) ============
+  if(store.freezeCredits === undefined) store.freezeCredits = 1;
+  if(!store.maxStreak) store.maxStreak = 0;
+
+  function getMonday(d){
+    d = new Date(d);
+    const day = d.getDay();
+    const diff = (day===0 ? -6 : 1) - day;
+    d.setDate(d.getDate()+diff);
+    return d;
+  }
+  function reconcileFreezes(){
+    const mondayKey = todayKey(getMonday(new Date()));
+    if(store.lastFreezeGrant !== mondayKey){
+      store.freezeCredits = 1;
+      store.lastFreezeGrant = mondayKey;
+      saveStore();
+    }
+  }
+  function isDayComplete(rec){
+    return !!(rec && rec.meal1 && rec.workout && rec.meal2 && rec.sleep);
+  }
   function computeStreak(){
+    reconcileFreezes();
     let n = 0;
     let d = new Date();
+    let usedFreeze = false;
+    let changed = false;
     while(true){
       const k = todayKey(d);
       const rec = store.days[k];
-      const complete = rec && rec.meal1 && rec.workout && rec.meal2 && rec.sleep;
-      if(complete){ n++; d.setDate(d.getDate()-1); }
-      else break;
+      if(isDayComplete(rec)){
+        n++; d.setDate(d.getDate()-1); continue;
+      }
+      if(k === TKEY){ d.setDate(d.getDate()-1); continue; } // today not over yet — skip without breaking
+      if(rec && rec.frozen){ d.setDate(d.getDate()-1); continue; } // already-protected past miss
+      if(!usedFreeze && store.freezeCredits > 0){
+        store.freezeCredits--; usedFreeze = true; changed = true;
+        if(!store.days[k]) store.days[k] = { meal1:false, water:0, workout:false, meal2:false, sleep:false };
+        store.days[k].frozen = true;
+        d.setDate(d.getDate()-1); continue;
+      }
+      break;
     }
+    if(changed) saveStore();
+    if(n > store.maxStreak){ store.maxStreak = n; saveStore(); }
     return n;
+  }
+  const badgeDefs = [
+    { days:7, icon:'🥉', label:'7 วัน' },
+    { days:14, icon:'🥈', label:'14 วัน' },
+    { days:30, icon:'🥇', label:'30 วัน' },
+  ];
+  function renderBadges(){
+    const row = document.getElementById('badgeRow');
+    row.innerHTML = '';
+    badgeDefs.forEach(b=>{
+      const earned = store.maxStreak >= b.days;
+      const el = document.createElement('div');
+      el.className = 'badge' + (earned ? ' earned' : '');
+      el.innerHTML = `<div class="b-icon">${b.icon}</div><div class="b-label">${b.label}</div>`;
+      row.appendChild(el);
+    });
   }
   function renderStreak(){
     const n = computeStreak();
     document.getElementById('streakMini').textContent = n;
     document.getElementById('streakBig').textContent = n;
+    document.getElementById('freezeCount').textContent = store.freezeCredits;
+    renderBadges();
   }
 
   // ============ HEATMAP ============
@@ -616,13 +725,55 @@
       let level = 0;
       if(rec){
         const count = [rec.meal1, rec.workout, rec.meal2, rec.sleep].filter(Boolean).length;
-        level = count===0 ? 0 : count<=1 ? 1 : count<=2 ? 1 : count<=3 ? 2 : 3;
+        level = count===0 ? 0 : count<=2 ? 1 : count<=3 ? 2 : 3;
       }
       const cell = document.createElement('div');
-      cell.className = 'heat-cell' + (level>0 ? ' l'+level : '');
+      cell.className = 'heat-cell'
+        + (level>0 ? ' l'+level : '')
+        + (rec && rec.frozen ? ' frozen' : '')
+        + (k===TKEY ? ' today' : '');
+      cell.title = k;
+      cell.addEventListener('click', ()=> openDayModal(k));
       heatGrid.appendChild(cell);
     }
   }
+
+  // ============ EDIT PAST DAY MODAL ============
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalDate = document.getElementById('modalDate');
+  const modalTasks = document.getElementById('modalTasks');
+  let modalKey = null;
+  function openDayModal(key){
+    modalKey = key;
+    const rec = getDay(key);
+    const parts = key.split('-');
+    modalDate.textContent = parts[2]+'/'+parts[1]+'/'+parts[0] + (key===TKEY ? ' (วันนี้)' : '');
+    modalTasks.innerHTML = '';
+    tasks.forEach(tk=>{
+      const row = document.createElement('div');
+      row.className = 'task-row';
+      const checked = rec[tk.key] ? 'checked' : '';
+      row.innerHTML = `
+        <div class="task-check ${checked}" data-key="${tk.key}"></div>
+        <div class="task-icon">${tk.icon}</div>
+        <div class="task-label">${tk.label}</div>`;
+      modalTasks.appendChild(row);
+    });
+    modalTasks.querySelectorAll('.task-check').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        rec[tk_from(el)] = !rec[tk_from(el)];
+        rec.frozen = false; // manual edit overrides freeze protection
+        saveStore();
+        openDayModal(key);
+        renderStreak(); renderHeat();
+        if(key === TKEY) renderTasks();
+      });
+    });
+    modalOverlay.classList.add('show');
+  }
+  function tk_from(el){ return el.dataset.key; }
+  document.getElementById('modalClose').addEventListener('click', ()=> modalOverlay.classList.remove('show'));
+  modalOverlay.addEventListener('click', (e)=>{ if(e.target === modalOverlay) modalOverlay.classList.remove('show'); });
 
   // ============ WEIGHT LOG ============
   const weightList = document.getElementById('weightList');
@@ -657,6 +808,47 @@
     saveStore();
     input.value = '';
     renderWeights();
+  });
+
+  // ============ BACKUP: EXPORT / IMPORT ============
+  document.getElementById('btnExport').addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify(store, null, 2)], { type:'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'gururang-backup-'+TKEY+'.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+  const importFile = document.getElementById('importFile');
+  document.getElementById('btnImportTrigger').addEventListener('click', ()=> importFile.click());
+  importFile.addEventListener('change', (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      try{
+        const data = JSON.parse(reader.result);
+        if(data && typeof data === 'object' && data.days){
+          store = data;
+          if(store.freezeCredits === undefined) store.freezeCredits = 1;
+          if(!store.maxStreak) store.maxStreak = 0;
+          if(!store.weights) store.weights = [];
+          today = getDay(TKEY);
+          saveStore();
+          renderTasks(); renderWater(); renderStreak(); renderHeat(); renderWeights();
+          alert('นำเข้าข้อมูลสำเร็จ 🎀');
+        } else {
+          alert('ไฟล์นี้ใช้ไม่ได้ ลองเลือกไฟล์ backup ที่ส่งออกจากแอปนี้');
+        }
+      }catch(err){
+        alert('อ่านไฟล์ไม่ได้ ตรวจสอบว่าเป็นไฟล์ .json ที่ถูกต้อง');
+      }
+    };
+    reader.readAsText(file);
+    importFile.value = '';
   });
 
   // ============ INIT ============
